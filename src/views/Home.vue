@@ -1,30 +1,50 @@
 <template>
   <div class="home">
-    <p style="margin-top:20px;">table-expand-example</p>
-    <el-table :data="tableData" stripe border style="width: 800px;margin:20px auto;">
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item :label="item.key" v-for="(item, index) in props.row" :key="item.value" :index="index">
-              <el-popover
-                placement="top"
-                width="240"
-                v-model="item.visible">
-                <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="popoverInput"></el-input>
-                <div style="text-align: right; margin: 10px 0 0">
-                  <el-button size="mini" type="text" @click="item.visible = false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="confirmChange(item)">确定</el-button>
-                </div>
-                <span style="cursor:pointer;" slot="reference" @click="showPopover(item)">{{ item.value }}</span>
-              </el-popover>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column label="商品 ID" prop="id.value"></el-table-column>
-      <el-table-column label="商品名称" prop="name.value"></el-table-column>
-      <el-table-column label="描述" prop="desc.value"></el-table-column>
-    </el-table>
+    <el-row>
+      <el-col :span="12">
+        <p style="margin-top:20px;">table-expand-example</p>
+        <el-table ref="table" size="small" :data="tableData" stripe border style="width: 800px;margin:20px auto;">
+          <el-table-column label="商品 ID" prop="id.value"></el-table-column>
+          <el-table-column label="商品名称" prop="name.value"></el-table-column>
+          <el-table-column label="描述" prop="desc.value"></el-table-column>
+          <el-table-column label="操作" width="100" align="center">
+            <template slot-scope="scope">
+              <el-button type="text" @click="toogleExpand(scope.row)">{{scope.row.expansion ? '收起' : '查看详情'}}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column type="expand" width="1">
+            <template slot-scope="props">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item :label="item.key" v-for="(item, index) in props.row" :key="item.value" :index="index">
+                  <el-popover v-if="item.key != '商品 ID'" placement="top" width="240" v-model="item.visible">
+                    <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="popoverInput"></el-input>
+                    <div style="text-align: right; margin: 10px 0 0">
+                      <el-button size="mini" type="text" @click="item.visible = false">取消</el-button>
+                      <el-button type="primary" size="mini" @click="confirmChange(item)">确定</el-button>
+                    </div>
+                    <span style="cursor:pointer;" slot="reference" @click="showPopover(item)">{{ item.value }}</span>
+                  </el-popover>
+                  <span v-else>{{ item.value }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-col>
+      <el-col :span="12">
+        <p style="margin-top:20px;">data contrast</p>
+        <p v-for="(item, index) in tableData" :key="item.id" :index="index">
+          {{item.id.value}}
+          {{item.name.value}}
+          {{item.shop.value}}
+          {{item.shopId.value}}
+          {{item.category.value}}
+          {{item.address.value}}
+          {{item.desc.value}}
+          {{item.expansion}}
+        </p>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -73,7 +93,7 @@ export default {
           value: '荷兰优质淡奶，奶香浓而不腻',
           visible: false,
         },
-      },{
+      }, {
         id: {
           key: '商品 ID',
           value: '12987123',
@@ -109,7 +129,7 @@ export default {
           value: '荷兰优质淡奶，奶香浓而不腻',
           visible: false,
         },
-      },{
+      }, {
         id: {
           key: '商品 ID',
           value: '12987124',
@@ -145,7 +165,7 @@ export default {
           value: '荷兰优质淡奶，奶香浓而不腻',
           visible: false,
         },
-      },{
+      }, {
         id: {
           key: '商品 ID',
           value: '12987125',
@@ -185,7 +205,25 @@ export default {
       ]
     }
   },
+  created() {
+    let tableData = this.tableData
+    tableData.map(item => {
+      item.expansion = false
+    })
+  },
   methods: {
+    toogleExpand(row) {
+      let $table = this.$refs.table;
+      this.tableData.map((item) => {
+        if (row.id != item.id) {
+          $table.toggleRowExpansion(item, false)
+          item.expansion = false
+        } else {
+          item.expansion = !item.expansion
+        }
+      })
+      $table.toggleRowExpansion(row)
+    },
     showPopover(item) {
       console.log(item)
       this.popoverInput = item.value

@@ -1,4 +1,9 @@
-# ele
+# element-table-expand扩展示例
+
+- [x] **基础手风琴效果**
+- [x] **修改操作栏文字**
+- [x] **修改扩展栏内容**
+- 查看博客[使用element-ui table expand展开行实现手风琴效果](https://www.cnblogs.com/e-cat/p/10532982.html)
 
 ## Project setup
 ```
