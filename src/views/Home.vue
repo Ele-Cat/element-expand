@@ -41,7 +41,6 @@
           {{item.category.value}}
           {{item.address.value}}
           {{item.desc.value}}
-          {{item.expansion}}
         </p>
       </el-col>
     </el-row>
@@ -206,15 +205,11 @@ export default {
     }
   },
   created() {
-    let tableData = this.tableData
-    tableData.map(item => {
-      item.expansion = false
-    })
   },
   methods: {
     toogleExpand(row) {
       let $table = this.$refs.table;
-      this.tableData.map((item) => {
+      this.tableData.map((item, index) => {
         if (row.id != item.id) {
           $table.toggleRowExpansion(item, false)
           item.expansion = false
